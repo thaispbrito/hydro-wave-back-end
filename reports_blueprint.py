@@ -145,3 +145,24 @@ def update_report(report_id):
         return jsonify(updated_report), 200
     except Exception as error:
         return jsonify({"error": str(error)}), 500
+    
+# Delete a report - DELETE /reports/<report_id>
+@reports_blueprint.route('/reports/<report_id>', methods=['DELETE'])
+@token_required
+def delete_report(report_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("SELECT * FROM reports WHERE reports.id = %s", (report_id,))
+        report_to_delete = cursor.fetchone()
+        if report_to_delete is None:
+            return jsonify({"error": "Report not found"}), 404
+        connection.commit()
+        if report_to_delete["author"] is not g.user["id"]:
+            return jsonify({"error": "Unauthorized"}), 401
+        cursor.execute("DELETE FROM reports WHERE reports.id = %s", (report_id,))
+        connection.commit()
+        connection.close()
+        return jsonify(report_to_delete), 200
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500    
