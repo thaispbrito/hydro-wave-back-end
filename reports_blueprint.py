@@ -76,3 +76,28 @@ def reports_index():
         return jsonify(consolidated_reports), 200
     except Exception as error:
         return jsonify({"error": str(error)}), 500
+
+# Read a single report - GET /hoots/<hoot_id>
+@reports_blueprint.route('/reports/<report_id>', methods=['GET'])
+def show_report(report_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("""
+            SELECT r.id, r.author AS report_author_id, r.title, r.reported_at, r.water_source, r.water_feature, r.location_lat, r.location_long, r.observation, r.condition, r.status, r.image_url, u_report.username AS author_username, c.id AS comment_id, c.text AS comment_text, u_comment.username AS comment_author_username
+            FROM reports r
+            INNER JOIN users u_report ON r.author = u_report.id
+            LEFT JOIN comments c ON r.id = c.report
+            LEFT JOIN users u_comment ON c.author = u_comment.id
+            WHERE r.id = %s;""",
+                       (report_id,))
+        unprocessed_report = cursor.fetchall()
+        if unprocessed_report is not None:
+            processed_report = consolidate_comments_in_reports(unprocessed_report)[0]
+            connection.close()
+            return jsonify(processed_report), 200
+        else:
+            connection.close()
+            return jsonify({"error": "Water report not found"}), 404
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500
