@@ -54,7 +54,7 @@ def update_comment(report_id, comment_id):
             return jsonify({"error": "Comment not found"}), 404
         if comment_to_update["author"] != g.user["id"]:
             return jsonify({"error": "Unauthorized"}), 401
-        cursor.execute("UPDATE comments SET text = %s WHERE id = %s RETURNING *",
+        cursor.execute("UPDATE comments SET text = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s RETURNING *",
                        (updated_comment_data["text"], comment_id))
         updated_comment = cursor.fetchone()
         connection.commit()

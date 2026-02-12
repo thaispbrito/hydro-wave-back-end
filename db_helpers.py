@@ -23,6 +23,8 @@ def consolidate_comments_in_reports(reports_with_comments):
                 consolidated_report["comments"].append(
                     {"comment_text": report["comment_text"],
                      "comment_id": report["comment_id"],
+                     "comment_created_at": report["comment_created_at"],
+                     "comment_updated_at": report["comment_updated_at"],
                      "comment_author_username": report["comment_author_username"]
                     })
                 break
@@ -34,12 +36,15 @@ def consolidate_comments_in_reports(reports_with_comments):
                 report["comments"].append(
                     {"comment_text": report["comment_text"],
                      "comment_id": report["comment_id"],
+                     "comment_created_at": report["comment_created_at"],
+                     "comment_updated_at": report["comment_updated_at"],
                      "comment_author_username": report["comment_author_username"]
                     }
                 )
             del report["comment_id"]
             del report["comment_text"]
             del report["comment_author_username"]
+            del report["comment_created_at"]
             consolidated_reports.append(report)
 
     return consolidated_reports
