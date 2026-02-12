@@ -45,6 +45,7 @@ def consolidate_comments_in_reports(reports_with_comments):
             del report["comment_text"]
             del report["comment_author_username"]
             del report["comment_created_at"]
+            del report["comment_updated_at"]
             consolidated_reports.append(report)
 
     return consolidated_reports
