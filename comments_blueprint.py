@@ -73,15 +73,29 @@ def delete_comment(report_id, comment_id):
     try:
         connection = get_db_connection()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        # Get the comment
         cursor.execute("SELECT * FROM comments WHERE id = %s", (comment_id,))
         comment_to_delete = cursor.fetchone()
         if comment_to_delete is None:
             return jsonify({"error": "Comment not found"}), 404
-        if comment_to_delete["author"] != g.user["id"]:
+
+        # Get the report
+        cursor.execute("SELECT * FROM reports WHERE id = %s", (report_id,))
+        report = cursor.fetchone()
+
+        # Allow delete if: comment author OR report author
+        if (
+            comment_to_delete["author"] != g.user["id"] and
+            report["author"] != g.user["id"]
+        ):
             return jsonify({"error": "Unauthorized"}), 401
+
         cursor.execute("DELETE FROM comments WHERE id = %s", (comment_id,))
         connection.commit()
         connection.close()
+
         return jsonify({"message": "Comment deleted successfully"}), 200
+
     except Exception as error:
         return jsonify({"error": str(error)}), 500
