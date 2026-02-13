@@ -18,7 +18,8 @@ app.register_blueprint(comments_blueprint)
 
 
 # Running app in debug mode (for auto-refresh) and setting up port to 5001
-app.run(debug=True, port=5001)
+if __name__ == '__main__':
+    app.run()
 
 
 
