@@ -12,6 +12,8 @@ bcrypt = "*"
 flask-cors = "*"
 cloudinary = "*"
 gunicorn = "*"
+dotenv = "*"
+google-genai = "*"
 
 [dev-packages]
 

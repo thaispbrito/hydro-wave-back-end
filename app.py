@@ -1,25 +1,28 @@
 from flask import Flask
 from flask_cors import CORS
+
 from auth_blueprint import authentication_blueprint
 from users_blueprint import users_blueprint
 from reports_blueprint import reports_blueprint
 from comments_blueprint import comments_blueprint
+from ai_blueprint import ai_blueprint
+from geocoding_blueprint import geocoding_blueprint
 
-# Initialize Flask
-# We'll use the pre-defined global '__name__' variable to tell Flask where it is.
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={
+     r"/*": {"origins": ["http://localhost:5173", "https://hydrowave.netlify.app"]}}, supports_credentials=True)
 
 app.register_blueprint(authentication_blueprint)
 app.register_blueprint(users_blueprint)
 app.register_blueprint(reports_blueprint)
 app.register_blueprint(comments_blueprint)
+app.register_blueprint(ai_blueprint)
+app.register_blueprint(geocoding_blueprint)
 
 
-# Running app in debug mode (for auto-refresh) and setting up port to 5001
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5000)
 
 
 
