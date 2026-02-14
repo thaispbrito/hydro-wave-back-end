@@ -1,0 +1,32 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE reports (
+    id SERIAL PRIMARY KEY,
+    author INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255),
+    reported_at TIMESTAMP NOT NULL,
+    water_source VARCHAR(50),
+    water_feature VARCHAR(50),
+    location_lat REAL NOT NULL,
+    location_long REAL NOT NULL,
+    observation VARCHAR(500) NOT NULL,
+    condition VARCHAR(50) NOT NULL,
+    status VARCHAR(50),
+    image_url TEXT DEFAULT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    location_name TEXT DEFAULT NULL
+);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    author INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    report INTEGER REFERENCES reports(id) ON DELETE CASCADE,
+    text VARCHAR(500),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
