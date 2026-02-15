@@ -20,7 +20,7 @@ def generate_insight_for_report(report_id):
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
             # Fetch the report from the DB
-            cursor.execute("SELECT observation, condition, water_source, location_name author FROM reports WHERE id = %s", (report_id,))
+            cursor.execute("SELECT observation, condition, water_source, location_name, author FROM reports WHERE id = %s", (report_id,))
             report = cursor.fetchone()
             connection.close()
 
@@ -48,7 +48,7 @@ def generate_insight_for_report(report_id):
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     thinking_config=types.ThinkingConfig(thinking_budget=0),
-                    tools=types.ToolsConfig(google_search=types.GoogleSearch())
+                    tools=[types.Tool(google_search=types.GoogleSearch())]
                 )
             )
 
