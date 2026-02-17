@@ -23,6 +23,3 @@ app.register_blueprint(geocoding_blueprint)
 
 if __name__ == '__main__':
     app.run(port=5000)
-
-
-

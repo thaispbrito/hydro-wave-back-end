@@ -140,6 +140,9 @@ def update_report(report_id):
         # if the user does upload an image, then we update our image_url field to the uploaded image
         if image:
             image_url = upload_image(image)
+
+        # Check for image removal signal from frontend
+        remove_image = request.form.get("remove_image")
             
         # specify the rest of the fields in our table and grab that information
         title = request.form.get("title")
@@ -165,8 +168,13 @@ def update_report(report_id):
         if report_to_update["author"] is not g.user["id"]:
             return jsonify({"error": "Unauthorized"}), 401
 
-        final_image_url = image_url if image_url else report_to_update.get(
-            "image_url")
+        # Decide final image_url value
+        if remove_image == "true":
+            final_image_url = None
+        elif image_url:
+            final_image_url = image_url
+        else:
+            final_image_url = report_to_update.get("image_url")
 
          # update all the form data in the database
         cursor.execute("UPDATE reports SET title = %s, reported_at = %s, water_source = %s, water_feature = %s, location_lat = %s, location_long = %s, location_name = %s, observation = %s, condition = %s, status = %s, updated_at = %s, image_url = %s WHERE reports.id = %s RETURNING *",
