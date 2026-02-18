@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ai_blueprint = Blueprint("ai_blueprint", __name__)
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))  # Explicitly pass API key
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @ai_blueprint.route("/ai/<report_id>", methods=["GET"])
 @token_required

@@ -8,13 +8,13 @@ def token_required(f):
     def decorated_function(*args, **kwargs):
         authorization_header = request.headers.get('Authorization')
 
-        # check if there is a header before attempting to decode it
+        # Check if there is a header before attempting to decode it
         if authorization_header is None:
             return jsonify({"err": "Unauthorized"}), 401
         try:
-            # remove the 'Bearer' portion of the Auth header string
+            # Remove the 'Bearer' portion of the Auth header string
             token = authorization_header.split(' ')[1]
-            # decode will throw an error if the token is invalid, triggering the except block automatically
+            # Decode will throw an error if the token is invalid, triggering the except block automatically
             token_data = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=["HS256"])
             g.user = token_data['payload']
 

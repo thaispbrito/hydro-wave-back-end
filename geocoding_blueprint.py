@@ -6,12 +6,10 @@ geocoding_blueprint = Blueprint("geocoding_blueprint", __name__)
 NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org"
 USER_AGENT = "HydroWave/1.0 (hydro-wave-app)"  # Required by Nominatim
 
+# Reverse geocoding: convert lat/lng coordinates to the location name
 @geocoding_blueprint.route("/geocode/reverse", methods=["GET"])
 def reverse_geocode():
-    """
-    Proxy endpoint for Nominatim reverse geocoding.
-    Converts lat/lng coordinates to a human-readable address.
-    """
+
     lat = request.args.get("lat")
     lng = request.args.get("lng")
 
@@ -42,13 +40,10 @@ def reverse_geocode():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
-
+# Forward geocoding: convert the location name to lat/lng coordinates
 @geocoding_blueprint.route("/geocode/search", methods=["GET"])
 def forward_geocode():
-    """
-    Proxy endpoint for Nominatim forward geocoding.
-    Converts an address/place name to lat/lng coordinates.
-    """
+
     query = request.args.get("q")
 
     if not query:

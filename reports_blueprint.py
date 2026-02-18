@@ -13,17 +13,17 @@ reports_blueprint = Blueprint('reports_blueprint', __name__)
 def create_report():
     try:
         image = request.files.get("image_url")
-        # image_url refers to the column name on the hoots table
-        # if the user does not upload an image it will default to None
+        # image_url refers to the column name on the reports table
+        # If the user does not upload an image it will default to None
         image_url = None
-        # if the user does upload an image, then we update our image_url field to the uploaded image
+        # If the user does upload an image, then we update our image_url field to the uploaded image
         if image:
             image_url = upload_image(image)
 
-        # set the author_id to be the id of the currently logged in user
+        # Set the author_id to be the id of the currently logged in user
         author_id = g.user["id"]
 
-        # specify the rest of the fields in our table and grab that information
+        # Specify the rest of the fields in our table and grab that information
         title = request.form.get("title")
         reported_at = request.form.get("reported_at")
         water_source = request.form.get("water_source")
@@ -35,12 +35,12 @@ def create_report():
         condition = request.form.get("condition")
         status = request.form.get("status")
 
-        # connect to the database
+        # Connect to the database
         connection = get_db_connection()
         cursor = connection.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
 
-        # insert all the form data into the database
+        # Insert all the form data into the database
         cursor.execute("""
                         INSERT INTO reports (author, title, reported_at, water_source, water_feature, location_lat, location_long, location_name, observation, condition, status, created_at, updated_at, image_url)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -50,7 +50,7 @@ def create_report():
                        )
         report_id = cursor.fetchone()["id"]
 
-        # Join the user table and the hoots table
+        # Join the user table and the reports table
         # Show the newly created information along with the user information
         cursor.execute("""SELECT r.id, 
                             r.author AS report_author_id, 
@@ -134,17 +134,17 @@ def show_report(report_id):
 def update_report(report_id):
     try:
         image = request.files.get("image_url")
-        # image_url refers to the column name on the hoots table
-        # if the user does not upload an image it will default to None
+        # image_url refers to the column name on the reports table
+        # If the user does not upload an image it will default to None
         image_url = None
-        # if the user does upload an image, then we update our image_url field to the uploaded image
+        # If the user does upload an image, then we update our image_url field to the uploaded image
         if image:
             image_url = upload_image(image)
 
         # Check for image removal signal from frontend
         remove_image = request.form.get("remove_image")
             
-        # specify the rest of the fields in our table and grab that information
+        # Specify the rest of the fields in our table and grab that information
         title = request.form.get("title")
         reported_at = request.form.get("reported_at")
         water_source = request.form.get("water_source")
@@ -156,7 +156,7 @@ def update_report(report_id):
         condition = request.form.get("condition")
         status = request.form.get("status")
         
-        # connect to the database
+        # Connect to the database
         connection = get_db_connection()
         cursor = connection.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
@@ -176,12 +176,12 @@ def update_report(report_id):
         else:
             final_image_url = report_to_update.get("image_url")
 
-         # update all the form data in the database
+         # Update all the form data in the database
         cursor.execute("UPDATE reports SET title = %s, reported_at = %s, water_source = %s, water_feature = %s, location_lat = %s, location_long = %s, location_name = %s, observation = %s, condition = %s, status = %s, updated_at = %s, image_url = %s WHERE reports.id = %s RETURNING *",
                        (title, reported_at, water_source, water_feature, location_lat, location_long, location_name, observation, condition, status, datetime.utcnow(), final_image_url, report_id))
         report_id = cursor.fetchone()["id"]
 
-        # Join the user table and the hoots table
+        # Join the user table and the reports table
         # Show the newly created information along with the user information
         cursor.execute("""SELECT r.id, 
                             r.author AS report_author_id, 
